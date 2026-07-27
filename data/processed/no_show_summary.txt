@@ -1,0 +1,29 @@
+======================================================================
+   MEDICAL APPOINTMENT NO-SHOW DATASET - SUMMARY REPORT
+======================================================================
+
+Dataset Size: 110,521 records
+Date Range: 2016-04-29 to 2016-06-08
+Unique Patients: 62,298
+Overall No-Show Rate: 20.19%
+
+Feature Statistics:
+----------------------------------------------------------------------
+  Average Age: 37.1 years
+  Average Booking Gap: 10.2 days
+  SMS Reminder Rate: 32.1%
+  Weekend Appointments: 0.0%
+  Patients with Hypertension: 19.7%
+  Patients with Diabetes: 7.2%
+
+Key Insights:
+----------------------------------------------------------------------
+  1. SMS reminders reduce no-shows by -65.1%
+  2. Same-day appointments: 4.6% no-show rate
+     Long-gap (>30 days): 33.0% no-show rate
+  3. Elderly patients (65+): 15.5% no-show rate
+     Young patients (<35): 22.9% no-show rate
+  4. Patients with previous no-shows: 29.8% rate
+     First-time patients: 18.6% rate
+
+======================================================================

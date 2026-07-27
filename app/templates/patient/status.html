@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Status - SmartCare{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1>📋 Your Appointments</h1>
+                <p>Patient: {{ patient.name }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            {% if appointments %}
+            {% for appointment in appointments %}
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{{ appointment.appointment_number }}</h5>
+                    {% if appointment.status == 'scheduled' or appointment.status == 'confirmed' %}
+                    <span class="badge bg-primary">{{ appointment.status|title }}</span>
+                    {% elif appointment.status == 'checked_in' %}
+                    <span class="badge bg-info">Checked In</span>
+                    {% elif appointment.status == 'in_progress' %}
+                    <span class="badge bg-warning">In Progress</span>
+                    {% elif appointment.status == 'completed' %}
+                    <span class="badge bg-success">Completed</span>
+                    {% elif appointment.status == 'cancelled' %}
+                    <span class="badge bg-danger">Cancelled</span>
+                    {% elif appointment.status == 'no_show' %}
+                    <span class="badge bg-secondary">No Show</span>
+                    {% else %}
+                    <span class="badge bg-secondary">{{ appointment.status|title }}</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>📅 Date:</strong> 
+                                {{ appointment.appointment_date.strftime('%B %d, %Y') }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>🕐 Time:</strong> 
+                                {{ appointment.appointment_time.strftime('%I:%M %p') }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>👨‍⚕️ Doctor:</strong> 
+                                {% set doctor = appointment.doctor %}
+                                Dr. {{ doctor.name if doctor else 'N/A' }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>🏥 Department:</strong> 
+                                {% set dept = appointment.department %}
+                                {{ dept.name if dept else 'N/A' }}
+                            </p>
+                            {% if appointment.symptoms %}
+                            <p class="mb-2">
+                                <strong>📝 Symptoms:</strong> 
+                                {{ appointment.symptoms }}
+                            </p>
+                            {% endif %}
+                            {% if appointment.priority_score > 0 %}
+                            <p class="mb-2">
+                                <strong>⚡ Priority:</strong> 
+                                {{ appointment.priority_score|round(1) }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if appointment.estimated_wait_min > 0 %}
+                    <div class="alert alert-info mt-3 mb-0">
+                        <i class="fas fa-clock"></i>
+                        <strong>Estimated Wait Time:</strong> ~{{ appointment.estimated_wait_min }} minutes
+                    </div>
+                    {% endif %}
+
+                    {% if appointment.status in ['scheduled', 'confirmed'] and appointment.appointment_date >= date.today() %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('patient_portal.book') }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit"></i> Reschedule
+                        </a>
+                        <button class="btn btn-sm btn-outline-danger" onclick="if(confirm('Cancel this appointment?')) alert('Cancellation feature coming soon!')">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                    <h5>No Appointments Found</h5>
+                    <p class="text-muted">You don't have any appointments yet.</p>
+                    <a href="{{ url_for('patient_portal.book') }}" class="btn btn-primary">
+                        <i class="fas fa-calendar-plus"></i> Book Appointment
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Patient Information</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Name:</strong> {{ patient.name }}</p>
+                    <p class="mb-2"><strong>Phone:</strong> {{ patient.phone }}</p>
+                    <p class="mb-2"><strong>Age:</strong> {{ patient.age }} years</p>
+                    <p class="mb-2"><strong>Gender:</strong> {{ patient.gender|title }}</p>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('patient_portal.book') }}" class="btn btn-primary">
+                            <i class="fas fa-calendar-plus"></i> Book New Appointment
+                        </a>
+                        <a href="{{ url_for('patient_portal.check_status') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-search"></i> Check Another Number
+                        </a>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

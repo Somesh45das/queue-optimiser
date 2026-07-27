@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Check Appointment Status - SmartCare{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="page-header text-center">
+                <h1>🔍 Check Appointment Status</h1>
+                <p>Enter your details to view your appointments</p>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control form-control-lg" id="phone" name="phone" 
+                                   placeholder="Enter your 10-digit phone number" 
+                                   pattern="[0-9]{10}" 
+                                   maxlength="10" 
+                                   required>
+                            <div class="form-text">Enter the phone number used during booking</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="appointment_number" class="form-label">Appointment Number (Optional)</label>
+                            <input type="text" class="form-control" id="appointment_number" name="appointment_number" 
+                                   placeholder="APT-20260227-001">
+                            <div class="form-text">Leave blank to see all your appointments</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search"></i> Check Status
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-body text-center">
+                    <h6>Already have an account?</h6>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>What You Can Check:</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Appointment date and time
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Doctor and department details
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Current status
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i>
+                            Queue position (if applicable)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

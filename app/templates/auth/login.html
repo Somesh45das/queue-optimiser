@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - SmartCare Hospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #0B0F19;
+            color: #F8FAFC;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+            animation: backgroundMove 30s ease-in-out infinite alternate;
+        }
+
+        @keyframes backgroundMove {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-5%, -5%) scale(1.1);
+            }
+        }
+
+        /* Floating Shapes */
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .shape1 {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape2 {
+            width: 60px;
+            height: 60px;
+            top: 70%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+
+        .shape3 {
+            width: 100px;
+            height: 100px;
+            top: 40%;
+            left: 5%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            animation: slideUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-left {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            color: #F8FAFC;
+            padding: 60px 40px;
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .login-left::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .login-left-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+        }
+
+        .welcome-icon i {
+            font-size: 4rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            animation: slideInLeft 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .feature-item:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .feature-item:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .feature-item:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+
+        .login-right {
+            padding: 60px 50px;
+        }
+
+        .role-badge {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            color: #F8FAFC;
+        }
+
+        .role-badge:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            border-color: #8b5cf6;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .role-badge.active {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        .role-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #F8FAFC;
+            border-radius: 12px;
+            padding: 14px 16px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .form-control::placeholder {
+            color: #94A3B8;
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: #F8FAFC;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: #8b5cf6;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-login:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-register {
+            background: transparent;
+            border: 1px solid #8b5cf6;
+            color: #8b5cf6;
+            border-radius: 12px;
+            padding: 10px 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-register:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .demo-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid #10b981;
+            border-radius: 12px;
+            padding: 16px;
+            animation: fadeIn 0.6s ease-out 0.8s both;
+            color: #94A3B8;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-check-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-check-input:checked {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            animation: slideDown 0.4s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-left {
+                padding: 40px 30px;
+            }
+
+            .login-right {
+                padding: 40px 30px;
+            }
+
+            .welcome-icon {
+                width: 100px;
+                height: 100px;
+            }
+
+            .welcome-icon i {
+                font-size: 3rem;
+            }
+        }
+
+        /* Loading Animation */
+        .btn-login.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Floating Shapes -->
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+
+    <div class="container">
+        <div class="login-wrapper">
+            <div class="login-card">
+                <div class="row g-0">
+                    <!-- Left Side - Welcome Section -->
+                    <div class="col-lg-5 d-none d-lg-block">
+                        <div class="login-left">
+                            <div class="login-left-content">
+                                <div class="welcome-icon">
+                                    <i class="bi bi-heart-pulse-fill"></i>
+                                </div>
+
+                                <h2 class="text-center mb-2">Welcome Back!</h2>
+                                <p class="text-center mb-5 opacity-75">Your health, our priority</p>
+
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="bi bi-calendar-check"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Easy Appointments</h6>
+                                        <small class="opacity-75">Book in seconds</small>
+                                    </div>
+                                </div>
+
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Real-Time Updates</h6>
+                                        <small class="opacity-75">Track your queue position</small>
+                                    </div>
+                                </div>
+
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Secure & Private</h6>
+                                        <small class="opacity-75">Your data is protected</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side - Login Form -->
+                    <div class="col-lg-7">
+                        <div class="login-right">
+                            <div class="text-center mb-4">
+                                <h3 class="mb-2"
+                                    style="background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    SmartCare Hospital
+                                </h3>
+                                <p class="text-secondary">Sign in to continue</p>
+                            </div>
+
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                            {% for category, message in messages %}
+                            <div
+                                class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show">
+                                <i
+                                    class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            {% endwith %}
+
+                            <!-- Role Selection -->
+                            <div class="mb-4">
+                                <p class="text-center text-secondary small mb-3">Select your role to see demo credentials</p>
+                                <div class="row g-2">
+                                    <div class="col-6 col-md-3">
+                                        <div class="card role-badge text-center p-2" onclick="selectRole('super_admin')" data-role="super_admin">
+                                            <div class="role-icon" style="width: 50px; height: 50px; font-size: 1.3rem; margin: 0 auto 8px;">
+                                                <i class="bi bi-shield-fill-check"></i>
+                                            </div>
+                                            <strong style="font-size: 0.85rem;">Super Admin</strong>
+                                            <small class="text-secondary" style="font-size: 0.7rem;">Full Control</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card role-badge text-center p-2" onclick="selectRole('hospital_admin')" data-role="hospital_admin">
+                                            <div class="role-icon" style="width: 50px; height: 50px; font-size: 1.3rem; margin: 0 auto 8px; background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+                                                <i class="bi bi-hospital"></i>
+                                            </div>
+                                            <strong style="font-size: 0.85rem;">Hospital Admin</strong>
+                                            <small class="text-secondary" style="font-size: 0.7rem;">Operations</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card role-badge text-center p-2" onclick="selectRole('doctor')" data-role="doctor">
+                                            <div class="role-icon" style="width: 50px; height: 50px; font-size: 1.3rem; margin: 0 auto 8px; background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);">
+                                                <i class="bi bi-person-badge"></i>
+                                            </div>
+                                            <strong style="font-size: 0.85rem;">Doctor</strong>
+                                            <small class="text-secondary" style="font-size: 0.7rem;">Schedule</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card role-badge text-center p-2" onclick="selectRole('patient')" data-role="patient">
+                                            <div class="role-icon" style="width: 50px; height: 50px; font-size: 1.3rem; margin: 0 auto 8px; background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                            <strong style="font-size: 0.85rem;">Patient</strong>
+                                            <small class="text-secondary" style="font-size: 0.7rem;">Book & Track</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Login Form -->
+                            <form method="POST" action="{{ url_for('auth.login') }}" novalidate id="loginForm">
+                                {{ form.hidden_tag() }}
+
+                                <div class="mb-3">
+                                    {{ form.email.label(class="form-label fw-semibold") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope"></i>
+                                        </span>
+                                        {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else
+                                        ""), placeholder="your.email@example.com") }}
+                                    </div>
+                                    {% if form.email.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ form.email.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.password.label(class="form-label fw-semibold") }}
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-lock"></i>
+                                        </span>
+                                        {{ form.password(class="form-control" + (" is-invalid" if form.password.errors
+                                        else ""), placeholder="Enter your password") }}
+                                    </div>
+                                    {% if form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        <i class="bi bi-exclamation-circle me-1"></i>{{ form.password.errors[0] }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="form-check">
+                                        {{ form.remember_me(class="form-check-input") }}
+                                        {{ form.remember_me.label(class="form-check-label text-secondary") }}
+                                    </div>
+                                    <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none small"
+                                        style="color: #8b5cf6;">
+                                        Forgot Password?
+                                    </a>
+                                </div>
+
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-login btn-lg">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                                        <span>Sign In</span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div class="text-center mb-4">
+                                <p class="text-secondary small mb-2">Don't have an account?</p>
+                                <a href="{{ url_for('auth.register') }}" class="btn btn-register">
+                                    <i class="bi bi-person-plus me-2"></i>Register as Patient
+                                </a>
+                            </div>
+
+                            <!-- Demo Accounts -->
+                            <div class="demo-box" id="demoBox">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-info-circle me-2" style="color: #10b981;"></i>
+                                    <strong style="color: #10b981;" id="demoTitle">Demo Accounts</strong>
+                                </div>
+                                <div id="demoContent">
+                                    <small class="d-block mb-1">
+                                        <strong class="text-danger">🔴 Super Admin:</strong> admin@hospital.com / admin123
+                                    </small>
+                                    <small class="d-block mb-1">
+                                        <strong class="text-warning">🟠 Hospital Admin:</strong> hospitaladmin@hospital.com / hospital123
+                                    </small>
+                                    <small class="d-block mb-1">
+                                        <strong class="text-info">🔵 Doctor:</strong> doctor@hospital.com / doctor123
+                                    </small>
+                                    <small class="d-block">
+                                        <strong class="text-success">🟢 Patient:</strong> test@patient.com / test123
+                                    </small>
+                                </div>
+                                <div id="roleInfo" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                    <small class="d-block text-secondary" id="roleDescription"></small>
+                                    <small class="d-block mt-2" id="roleCredentials"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-4">
+                <p class="text-white small mb-0">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Secure & Encrypted Connection
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Role information
+        const roleInfo = {
+            super_admin: {
+                title: '🔴 Super Admin Access',
+                description: 'Full system control • Manage doctors & departments • User management • System settings',
+                credentials: '<strong>Email:</strong> admin@hospital.com<br><strong>Password:</strong> admin123',
+                color: '#dc3545'
+            },
+            hospital_admin: {
+                title: '🟠 Hospital Admin Access',
+                description: 'Manage appointments • Queue management • View reports • Send notifications',
+                credentials: '<strong>Email:</strong> hospitaladmin@hospital.com<br><strong>Password:</strong> hospital123',
+                color: '#f59e0b'
+            },
+            doctor: {
+                title: '🔵 Doctor Access',
+                description: 'View own schedule • Manage own appointments • View own queue • Call patients',
+                credentials: '<strong>Email:</strong> doctor@hospital.com<br><strong>Password:</strong> doctor123',
+                color: '#3b82f6'
+            },
+            patient: {
+                title: '🟢 Patient Access',
+                description: 'Book appointments • View own appointments • Track queue status • View history',
+                credentials: '<strong>Email:</strong> test@patient.com<br><strong>Password:</strong> test123',
+                color: '#10b981'
+            }
+        };
+
+        // Role selection
+        function selectRole(role) {
+            // Remove active class from all badges
+            document.querySelectorAll('.role-badge').forEach(badge => {
+                badge.classList.remove('active');
+            });
+            
+            // Add active class to selected badge
+            event.currentTarget.classList.add('active');
+            
+            // Update demo box
+            const info = roleInfo[role];
+            document.getElementById('demoTitle').textContent = info.title;
+            document.getElementById('demoTitle').style.color = info.color;
+            document.getElementById('roleDescription').textContent = info.description;
+            document.getElementById('roleCredentials').innerHTML = info.credentials;
+            
+            // Hide all accounts, show role info
+            document.getElementById('demoContent').style.display = 'none';
+            document.getElementById('roleInfo').style.display = 'block';
+            
+            // Auto-fill credentials
+            const emailField = document.querySelector('input[name="email"]');
+            const passwordField = document.querySelector('input[name="password"]');
+            
+            if (role === 'super_admin') {
+                emailField.value = 'admin@hospital.com';
+                passwordField.value = 'admin123';
+            } else if (role === 'hospital_admin') {
+                emailField.value = 'hospitaladmin@hospital.com';
+                passwordField.value = 'hospital123';
+            } else if (role === 'doctor') {
+                emailField.value = 'doctor@hospital.com';
+                passwordField.value = 'doctor123';
+            } else if (role === 'patient') {
+                emailField.value = 'test@patient.com';
+                passwordField.value = 'test123';
+            }
+        }
+
+        // Form submission animation
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            const btn = this.querySelector('.btn-login');
+            btn.classList.add('loading');
+            btn.querySelector('span').textContent = 'Signing in...';
+        });
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
+
+</html>

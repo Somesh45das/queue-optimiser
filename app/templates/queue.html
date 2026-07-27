@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block title %}Queue Management - Smart Hospital{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-list-ol"></i> Queue Management</h1>
+        <div>
+            <a href="{{ url_for('queue.sync_appointments') }}" class="btn btn-primary">
+                <i class="fas fa-sync"></i> Sync Appointments
+            </a>
+        </div>
+    </div>
+
+    <!-- Department Filter -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Department</label>
+                    <select name="department" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}" {% if selected_dept == dept.id %}selected{% endif %}>
+                            {{ dept.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Queue Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-primary">{{ stats.get('waiting', 0) }}</h3>
+                    <p class="mb-0">Waiting</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-info">{{ stats.get('in_progress', 0) }}</h3>
+                    <p class="mb-0">In Progress</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-success">{{ stats.get('completed', 0) }}</h3>
+                    <p class="mb-0">Completed</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3 class="text-warning">{{ stats.get('avg_wait_time', 0)|int }} min</h3>
+                    <p class="mb-0">Avg Wait Time</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Priority Legend -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="fas fa-info-circle"></i> Priority Risk Levels</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge" style="background-color: #dc3545; min-width: 90px;">🔴 CRITICAL</span>
+                        <span class="ms-2 text-muted">70-100% Risk</span>
+                    </div>
+                    <small class="text-muted">Immediate attention required</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge" style="background-color: #fd7e14; min-width: 90px;">🟠 HIGH</span>
+                        <span class="ms-2 text-muted">45-69% Risk</span>
+                    </div>
+                    <small class="text-muted">Priority treatment needed</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge" style="background-color: #ffc107; min-width: 90px;">🟡 MEDIUM</span>
+                        <span class="ms-2 text-muted">20-44% Risk</span>
+                    </div>
+                    <small class="text-muted">Standard priority</small>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="badge" style="background-color: #28a745; min-width: 90px;">🟢 NORMAL</span>
+                        <span class="ms-2 text-muted">0-19% Risk</span>
+                    </div>
+                    <small class="text-muted">Routine consultation</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Queue List -->
+    {% if queue_data %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Current Queue</h5>
+        </div>
+        <div class="card-body">
+            {% if is_single_dept %}
+            <!-- Single department view -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Priority</th>
+                            <th>Scheduled Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in queue_data %}
+                        <tr>
+                            <td><strong>{{ item.entry.token_number }}</strong></td>
+                            <td>
+                                <a href="{{ url_for('queue.patient_details', patient_id=item.entry.patient.id) }}" class="text-primary">
+                                    {{ item.entry.patient.name }}
+                                </a>
+                            </td>
+                            <td>{{ item.entry.doctor.name if item.entry.doctor else 'Any' }}</td>
+                            <td>
+                                {% set priority_pct = (item.entry.priority_score / 100 * 100)|round(0)|int %}
+                                <div class="d-flex align-items-center">
+                                    <span class="badge" style="background-color: {{ item.priority.color if item.priority else '#6c757d' }}; min-width: 80px;">
+                                        {{ item.priority.icon if item.priority else '⚪' }} {{ item.priority.label if item.priority else 'Normal' }}
+                                    </span>
+                                    <div class="ms-2" style="min-width: 120px;">
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar" 
+                                                 role="progressbar" 
+                                                 style="width: {{ priority_pct }}%; background-color: {{ item.priority.color if item.priority else '#6c757d' }};"
+                                                 aria-valuenow="{{ priority_pct }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                {{ priority_pct }}%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">Score: {{ item.entry.priority_score }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if item.entry.appointment %}
+                                <span class="text-primary">
+                                    <i class="fas fa-clock"></i> {{ item.entry.appointment.appointment_time.strftime('%I:%M %p') }}
+                                </span>
+                                {% else %}
+                                <span class="text-muted">Walk-in</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'warning' if item.entry.status == 'waiting' else 'primary' if item.entry.status == 'in_progress' else 'success' }}">
+                                    {{ item.entry.status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if item.entry.status == 'waiting' %}
+                                <form method="POST" action="{{ url_for('queue.start_consultation', queue_id=item.entry.id) }}" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-play"></i> Start
+                                    </button>
+                                </form>
+                                {% elif item.entry.status == 'in_progress' %}
+                                <form method="POST" action="{{ url_for('queue.complete_consultation', queue_id=item.entry.id) }}" style="display: inline;">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Complete
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <!-- All departments view -->
+            {% for dept_data in queue_data %}
+            <h5 class="mt-4">{{ dept_data.department.name }}</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Token</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Priority</th>
+                            <th>Scheduled Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in dept_data.queue %}
+                        <tr>
+                            <td><strong>{{ item.entry.token_number }}</strong></td>
+                            <td>
+                                <a href="{{ url_for('queue.patient_details', patient_id=item.entry.patient.id) }}" class="text-primary">
+                                    {{ item.entry.patient.name }}
+                                </a>
+                            </td>
+                            <td>{{ item.entry.doctor.name if item.entry.doctor else 'Any' }}</td>
+                            <td>
+                                {% set priority_pct = (item.entry.priority_score / 100 * 100)|round(0)|int %}
+                                <div class="d-flex align-items-center">
+                                    <span class="badge" style="background-color: {{ item.priority.color if item.priority else '#6c757d' }}; min-width: 70px; font-size: 0.75rem;">
+                                        {{ item.priority.icon if item.priority else '⚪' }} {{ item.priority.label if item.priority else 'Normal' }}
+                                    </span>
+                                    <div class="ms-2" style="min-width: 100px;">
+                                        <div class="progress" style="height: 18px;">
+                                            <div class="progress-bar" 
+                                                 role="progressbar" 
+                                                 style="width: {{ priority_pct }}%; background-color: {{ item.priority.color if item.priority else '#6c757d' }}; font-size: 0.7rem;"
+                                                 aria-valuenow="{{ priority_pct }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                                {{ priority_pct }}%
+                                            </div>
+                                        </div>
+                                        <small class="text-muted" style="font-size: 0.7rem;">{{ item.entry.priority_score }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% if item.entry.appointment %}
+                                <span class="text-primary">
+                                    <i class="fas fa-clock"></i> {{ item.entry.appointment.appointment_time.strftime('%I:%M %p') }}
+                                </span>
+                                {% else %}
+                                <span class="text-muted">Walk-in</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'warning' if item.entry.status == 'waiting' else 'primary' }}">
+                                    {{ item.entry.status|title }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No patients in queue.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vercel_app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "vercel_app.py"
+    }
+  ],
+  "env": {
+    "SECRET_KEY": "vercel-deployment-secret-key-2024",
+    "SKIP_ML_LOADING": "1"
+  }
+}
