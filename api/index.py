@@ -20,6 +20,7 @@ Deployment checklist:
 """
 import os
 import sys
+import traceback
 
 # The project root sits one level above the api/ folder.
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,13 +39,48 @@ os.environ.setdefault("ENABLE_BACKUP_SCHEDULER", "False")
 if not os.environ.get("DATABASE_URL") and not os.environ.get("POSTGRES_URL"):
     os.environ["DATABASE_URL"] = "sqlite:////tmp/hospital.db"
 
-from app import create_app, db  # noqa: E402
 
-app = create_app()
+def _build_app():
+    from app import create_app, db  # local import so any error is captured
 
-# Ensure schema exists on first cold-start.
-with app.app_context():
-    try:
-        db.create_all()
-    except Exception as exc:  # pragma: no cover - deployment defensive
-        app.logger.error("Vercel bootstrap: db.create_all() failed: %s", exc)
+    flask_app = create_app()
+    with flask_app.app_context():
+        try:
+            db.create_all()
+        except Exception as exc:
+            flask_app.logger.error(
+                "Vercel bootstrap: db.create_all() failed: %s", exc
+            )
+    return flask_app
+
+
+try:
+    app = _build_app()
+except Exception as startup_error:
+    # Surface a readable error page instead of a blank INTERNAL_FUNCTION_
+    # INVOCATION_FAILED so the deployment is debuggable from the browser.
+    from flask import Flask, jsonify
+
+    error_message = str(startup_error)
+    error_trace = traceback.format_exc()
+    print("=" * 60, file=sys.stderr)
+    print("SmartCare startup failed:", file=sys.stderr)
+    print(error_trace, file=sys.stderr)
+    print("=" * 60, file=sys.stderr)
+
+    app = Flask(__name__)
+
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def _startup_failure(path):  # noqa: ARG001
+        return jsonify({
+            "status": "startup_error",
+            "error": error_message,
+            "hint": (
+                "Check the Vercel function logs for the full traceback. "
+                "Common causes: missing DATABASE_URL, Postgres unreachable, "
+                "or a package version mismatch."
+            ),
+            "database_url_set": bool(os.environ.get("DATABASE_URL")),
+            "secret_key_set": bool(os.environ.get("SECRET_KEY")),
+        }), 500

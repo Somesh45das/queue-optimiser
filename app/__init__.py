@@ -25,8 +25,12 @@ def create_app(config_class=None):
     # Secret key for sessions and CSRF
     app.secret_key = app.config['SECRET_KEY']
 
-    # Ensure instance folder exists
-    os.makedirs(os.path.join(app.root_path, "..", "instance"), exist_ok=True)
+    # Ensure instance folder exists. Serverless filesystems (Vercel, AWS
+    # Lambda) are read-only, so treat failure as non-fatal.
+    try:
+        os.makedirs(os.path.join(app.root_path, "..", "instance"), exist_ok=True)
+    except OSError:
+        pass
 
     # Initialize extensions
     db.init_app(app)
@@ -147,25 +151,40 @@ def _start_health_scheduler(app):
 def _configure_logging(app):
     """
     Requirement 21.6: log errors with timestamp, type and stack trace.
+
+    Falls back to stdout when the filesystem is read-only (serverless
+    hosts like Vercel), where the platform captures stdout automatically.
     """
     import logging
     from logging.handlers import RotatingFileHandler
 
-    log_dir = os.path.join(app.root_path, "..", "logs")
-    os.makedirs(log_dir, exist_ok=True)
-
-    handler = RotatingFileHandler(
-        os.path.join(log_dir, "smartcare.log"),
-        maxBytes=1_000_000,
-        backupCount=5,
-        encoding="utf-8",
-    )
-    handler.setFormatter(logging.Formatter(
+    formatter = logging.Formatter(
         "%(asctime)s %(levelname)s [%(name)s] %(message)s"
-    ))
+    )
+
+    handler = None
+    log_dir = os.path.join(app.root_path, "..", "logs")
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        handler = RotatingFileHandler(
+            os.path.join(log_dir, "smartcare.log"),
+            maxBytes=1_000_000,
+            backupCount=5,
+            encoding="utf-8",
+        )
+    except OSError:
+        # Serverless / read-only filesystem: log to stdout so the platform
+        # log stream captures it.
+        handler = logging.StreamHandler()
+
+    handler.setFormatter(formatter)
     handler.setLevel(logging.INFO)
 
-    if not any(isinstance(h, RotatingFileHandler) for h in app.logger.handlers):
+    already_present = any(
+        isinstance(h, type(handler)) and h is not handler
+        for h in app.logger.handlers
+    )
+    if not already_present:
         app.logger.addHandler(handler)
     app.logger.setLevel(logging.INFO)
 
