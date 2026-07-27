@@ -193,19 +193,21 @@ def save_model(model, scaler, feature_names, metrics):
     models_dir = os.path.join("app", "ml", "models")
     os.makedirs(models_dir, exist_ok=True)
     
+    # Compress the pickles: cuts a 100-tree RandomForest from ~30 MB to
+    # ~11 MB. Keeps deployment artefacts within serverless size limits.
     # Save model
     model_path = os.path.join(models_dir, "noshow_model.pkl")
-    joblib.dump(model, model_path)
+    joblib.dump(model, model_path, compress=3)
     print(f"   ✅ Model saved to: {model_path}")
     
     # Save scaler
     scaler_path = os.path.join(models_dir, "noshow_scaler.pkl")
-    joblib.dump(scaler, scaler_path)
+    joblib.dump(scaler, scaler_path, compress=3)
     print(f"   ✅ Scaler saved to: {scaler_path}")
     
     # Save feature names
     features_path = os.path.join(models_dir, "noshow_features.pkl")
-    joblib.dump(feature_names, features_path)
+    joblib.dump(feature_names, features_path, compress=3)
     print(f"   ✅ Features saved to: {features_path}")
     
     # Save metadata
@@ -226,7 +228,7 @@ def save_model(model, scaler, feature_names, metrics):
     }
     
     metadata_path = os.path.join(models_dir, "noshow_metadata.pkl")
-    joblib.dump(metadata, metadata_path)
+    joblib.dump(metadata, metadata_path, compress=3)
     print(f"   ✅ Metadata saved to: {metadata_path}")
     
     return model_path

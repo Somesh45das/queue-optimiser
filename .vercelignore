@@ -1,24 +1,35 @@
+# Virtualenvs and caches
 venv/
+.venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
-*.so
-*.egg
-*.egg-info/
-dist/
-build/
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.env
-.venv
-instance/hospital.db
-*.log
-.DS_Store
+
+# Local runtime artefacts
+instance/
+logs/
+backups/
+data/raw/
+data/processed/
+
+# Local database dumps
+*.db
+*.sqlite
+*.sqlite3
+
+# Dev-only scripts and tests (not needed at runtime)
+serve.py
+run.py
+load_test.py
+seed_data.py
+
+# Docs and dotfiles that don't need to ship
+docs/
+.kiro/
 .vscode/
 .idea/
-*.md
-!README.md
+
+# OS junk
+.DS_Store
+Thumbs.db

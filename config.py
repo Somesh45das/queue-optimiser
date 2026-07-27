@@ -45,6 +45,12 @@ class Config:
         os.environ.get("ENABLE_HEALTH_SCHEDULER", "True").lower() == "true"
     )
 
+    # Requirement 21.7: daily SQLite database backups. Disable on serverless
+    # deployments where the filesystem is ephemeral.
+    ENABLE_BACKUP_SCHEDULER = (
+        os.environ.get("ENABLE_BACKUP_SCHEDULER", "True").lower() == "true"
+    )
+
     # Hospital settings
     HOSPITAL_NAME = "SmartCare Hospital"
     OPD_START_HOUR = 8       # 8 AM

@@ -5,14 +5,17 @@ Flask-Login==0.6.3
 Flask-WTF==1.2.1
 WTForms==3.1.1
 PyJWT==2.8.0
-scikit-learn==1.3.2
-pandas==2.1.4
-numpy==1.26.2
-joblib==1.3.2
-APScheduler==3.10.4
-python-dateutil==2.8.2
-email-validator==2.1.0
-gunicorn==21.2.0
-waitress==3.0.0
-psycopg2-binary==2.9.9
 bcrypt==4.1.2
+email-validator==2.1.0
+python-dateutil==2.8.2
+APScheduler==3.10.4
+# ML stack. The pickled models were saved with scikit-learn 1.8, so Vercel
+# needs a compatible runtime. Numpy/pandas kept loose to reuse cached wheels.
+scikit-learn>=1.8,<2.0
+pandas>=2.2,<3.1
+numpy>=1.26,<3.0
+joblib>=1.3,<2.0
+# Production servers - only used for local `serve.py`. Harmless on Vercel.
+gunicorn>=21.2
+waitress>=3.0
+psycopg2-binary>=2.9,<3.0

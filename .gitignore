@@ -38,11 +38,13 @@ Thumbs.db
 .env
 .env.local
 
-# ML Models (large files)
-*.pkl
-app/ml/crowd_model.pkl
-app/ml/scaler.pkl
-app/ml/models/*.pkl
+# ML Models - shipped with the deployment so serverless functions can load
+# them without a training step. Uncomment these lines if you prefer to keep
+# them out of git (the app falls back to rule-based prediction).
+# *.pkl
+# app/ml/crowd_model.pkl
+# app/ml/scaler.pkl
+# app/ml/models/*.pkl
 
 # Data files
 data/raw/*.csv

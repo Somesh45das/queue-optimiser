@@ -103,8 +103,10 @@ def train_crowd_model():
 
     # 6. Save model
     os.makedirs(os.path.dirname(Config.ML_MODEL_PATH), exist_ok=True)
-    joblib.dump(model, Config.ML_MODEL_PATH)
-    joblib.dump(scaler, Config.ML_SCALER_PATH)
+    # Compress the pickle: cuts a 150-tree RandomForest from ~110 MB down to
+    # ~21 MB, which comfortably fits under GitHub and serverless size limits.
+    joblib.dump(model, Config.ML_MODEL_PATH, compress=3)
+    joblib.dump(scaler, Config.ML_SCALER_PATH, compress=3)
     print(f"\n   ✅ Model saved to: {Config.ML_MODEL_PATH}")
     print(f"   ✅ Scaler saved to: {Config.ML_SCALER_PATH}")
     print("=" * 60)
